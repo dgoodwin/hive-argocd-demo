@@ -2,7 +2,6 @@
 
 set -e
 
-IMG="quay.io/dgoodwin/hive:latest"
 TMP_DIR=$(mktemp -d -t hive-XXXXX)
 
 echo "Working in temp dir: $TMP_DIR"
@@ -16,7 +15,11 @@ mkdir hive-argocd-demo/manifests
 
 git clone git@github.com:openshift/hive.git
 pushd hive
-#make image-hive docker-push
+GIT_HASH=`git rev-parse --short=7 HEAD`
+IMG="quay.io/dgoodwin/hive:$GIT_HASH"
+echo "Building hive image $IMG"
+podman build -t $IMG .
+podman push $IMG
 
 # Kustomize manifests:
 cd config
